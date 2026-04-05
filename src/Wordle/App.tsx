@@ -19,11 +19,11 @@ const BAD_CELL = '#888888';
 let gameArea: GameArea;
 let keyBoard: KeyBoard;
 
-class Key extends React.Component<{}> {
+class Key extends React.Component<{ id: string; color: string }> {
   state = {};
 
   render() {
-    var text = this.props.id;
+    const text = this.props.id;
     return (
       <button
         className="key"
@@ -111,9 +111,9 @@ class KeyBoard extends React.Component {
     return (
       <div>
         {rows}
-        <EnterKey />
+        <EnterKey id="Enter" color={PERFECT_KEY} />
         {row2}
-        <BkspKey />
+        <BkspKey id="Bksp" color={PERFECT_KEY} />
       </div>
     );
   }
@@ -133,7 +133,7 @@ class KeyBoard extends React.Component {
   }
 }
 
-class GameCell extends React.Component {
+class GameCell extends React.Component<{ id: string; color: string }> {
   state = {};
 
   render() {
@@ -156,7 +156,7 @@ class GameArea extends React.Component<NonNullable<unknown>> {
   j = 0;
   answer = '';
 
-  constructor(props) {
+  constructor(props: NonNullable<unknown>) {
     super(props);
     gameArea = this as GameArea;
     this.answer = '';
