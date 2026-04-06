@@ -45,3 +45,6 @@ jobs:
           git commit -m "Update dist" || echo "No changes to commit"
           git push origin dist
         working-directory: .
+
+      - name: Test
+        run: node -v
