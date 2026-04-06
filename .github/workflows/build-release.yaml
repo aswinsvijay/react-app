@@ -38,10 +38,7 @@ jobs:
         run: |
           git fetch origin dist:dist || git checkout --orphan dist
           git switch dist || git checkout dist
-          git rm -r --cached . >/dev/null 2>&1 || true
-          rm -rf *
-          cp -r ../dist/* ./
-          git add .
+          git add dist
           git commit -m "Update dist" || echo "No changes to commit"
           git push origin dist
         working-directory: .
