@@ -5,7 +5,6 @@ import { variants } from './variants';
 type TimeZoneConfig = {
   label: string;
   timeZoneId: string;
-  size: `${number}px`;
 };
 
 function divMod(value: number, divisor: number) {
@@ -51,22 +50,18 @@ const configs: TimeZoneConfig[] = [
   {
     timeZoneId: 'America/Chicago',
     label: 'Chicago',
-    size: '40px',
   },
   {
     timeZoneId: 'Asia/Kolkata',
     label: 'India',
-    size: '40px',
   },
   {
     timeZoneId: 'Europe/London',
     label: 'London',
-    size: '40px',
   },
   {
     timeZoneId: 'Asia/Dubai',
     label: 'Dubai',
-    size: '40px',
   },
 ];
 
@@ -95,6 +90,10 @@ const App: React.FC<NonNullable<unknown>> = () => {
                   backgroundImage: `url(public/clock/${config.timeZoneId.toLowerCase().replace('/', '-')}.jpg)`,
                 }}
               ></div>
+              <div className="clock-with-label">
+                <div className="label">{config.label}</div>
+                <div className="clock-wrapper">{config.label}</div>
+              </div>
             </div>
           );
         })}
