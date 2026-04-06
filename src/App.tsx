@@ -16,12 +16,16 @@ function App() {
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {appList.map(({ name }) => {
-          return <button onClick={() => setSelected(name)}>{name}</button>;
+          return (
+            <button key={name} onClick={() => setSelected(name)}>
+              {name}
+            </button>
+          );
         })}
       </div>
       <div style={{ flex: 1 }}>
         {appList.map(({ name, Component }) => {
-          return selected === name && <Component />;
+          return selected === name && <Component key={name} />;
         })}
       </div>
     </div>
