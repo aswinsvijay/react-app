@@ -34,12 +34,14 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Push dist folder to dist branch
+      - name: Add and push dist folder to dist branch
         run: |
-          git fetch origin
-          git checkout dist
-          git add -f dist
-          git commit -m "chore: update dist folder" || echo "No changes to commit"
-          git push origin dist --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git fetch origin dist:dist || git checkout --orphan dist
+          git switch dist || git checkout dist
+          git rm -r --cached . >/dev/null 2>&1 || true
+          rm -rf *
+          cp -r ../dist/* ./
+          git add .
+          git commit -m "Update dist" || echo "No changes to commit"
+          git push origin dist
+        working-directory: .
