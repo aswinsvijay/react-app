@@ -32,6 +32,16 @@ configs.forEach((config) => {
 });
 
 const App: React.FC<NonNullable<unknown>> = () => {
+  // A state to force update the component every second
+  const [, setNow] = useState<number>();
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000); // update every second
+    return () => clearInterval(interval);
+  }, []);
+
   const [variantIndex, setVariantIndex] = useState(0);
 
   const Component = useMemo(() => variants[variantIndex], [variantIndex]);
