@@ -36,9 +36,12 @@ jobs:
 
       - name: Add and push dist folder to dist branch
         run: |
+          mv ./dist ../dist
           git fetch origin dist:dist || git checkout --orphan dist
           git switch dist || git checkout dist
-          git add dist
+          rm -rf ./dist
+          mv ../dist ./dist
+          git add ./dist
           git commit -m "Update dist" || echo "No changes to commit"
           git push origin dist
         working-directory: .
