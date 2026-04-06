@@ -4,21 +4,6 @@
   --background: url('./images/america-chicago.jpg');
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  background-color: #cccccc;
-  justify-content: center;
-  align-items: center;
-}
-
 #clock-grid {
   display: grid;
   width: 100%;
