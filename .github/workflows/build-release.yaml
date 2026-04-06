@@ -37,7 +37,7 @@ jobs:
       - name: Push dist folder to dist branch
         run: |
           git fetch origin
-          git checkout -B dist
+          git checkout dist
           git add -f dist
           git commit -m "chore: update dist folder" || echo "No changes to commit"
           git push origin dist --force
