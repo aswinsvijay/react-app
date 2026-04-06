@@ -29,29 +29,17 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Generate safe tag name
-        id: tagname
+      - name: Configure git for pushing to dist branch
         run: |
-          SHORT_SHA=$(git rev-parse --short=8 HEAD)
-          DATE=$(date +'%Y%m%d%H%M%S')
-          TAG_NAME="release-${DATE}-${SHORT_SHA}"
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.tagname.outputs.tag_name }}
-          name: Release ${{ steps.tagname.outputs.tag_name }}
-          draft: false
-          prerelease: false
+      - name: Push dist folder to dist branch
+        run: |
+          git fetch origin
+          git checkout -B dist
+          git add -f dist
+          git commit -m "chore: update dist folder" || echo "No changes to commit"
+          git push origin dist --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Build Folder to Release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/**
-          tag: ${{ steps.tagname.outputs.tag_name }}
-          overwrite: true
-          file_glob: true
