@@ -86,8 +86,17 @@ const App: React.FC<NonNullable<unknown>> = () => {
   return (
     <div className="App" onClick={setNextVariantIndex}>
       <div id="clock-grid">
-        {configs.map((cfg) => {
-          return <div className="background-container">{Component.name}</div>;
+        {configs.map((config) => {
+          return (
+            <div className="background-container">
+              <div
+                className="background"
+                style={{
+                  backgroundImage: `url(public/clock/${config.timeZoneId.toLowerCase().replace('/', '-')}.jpg)`,
+                }}
+              ></div>
+            </div>
+          );
         })}
       </div>
     </div>
