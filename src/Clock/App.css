@@ -1,6 +1,5 @@
 :root {
   --cell-size: 40px;
-  --offset: 0;
 }
 
 #clock-grid {
@@ -131,10 +130,6 @@
         box-shadow: 0px 0px 5px 3px #00000066;
       }
     }
-  }
-
-  .offset-value {
-    margin-top: calc(-1 * var(--offset) * var(--cell-size));
   }
 }
 
