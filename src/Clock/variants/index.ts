@@ -1,6 +1,6 @@
 import type { ClockComponentProps } from '../types';
-import { Blocky } from './Blocky';
-import { Pixels } from './Pixels';
-import { Slider } from './Slider';
+import { BlockyClock } from './BlockyClock';
+import { AnalogPixelsClock } from './AnalogPixelsClock';
+import { ScrollingClock } from './ScrollingClock';
 
-export const variants: React.FC<ClockComponentProps>[] = [Slider, Pixels, Blocky];
+export const variants: React.FC<ClockComponentProps>[] = [ScrollingClock, AnalogPixelsClock, BlockyClock];

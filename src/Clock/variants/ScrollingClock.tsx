@@ -4,7 +4,7 @@ import { range } from '../utils';
 
 const limits = [range(0, 2), range(0, 9), range(0, 5), range(0, 9), range(0, 5), range(0, 9)];
 
-export const Slider: React.FC<ClockComponentProps> = ({ timeParts }) => {
+export const ScrollingClock: React.FC<ClockComponentProps> = ({ timeParts }) => {
   return (
     <div className="scrolling-clock-container">
       {([0, 1, 2, 3, 4, 5] as const).map((i) => {
