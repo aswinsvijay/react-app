@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useMemo, useState } from 'react';
 import { variants } from './variants';
-import { getTimeZoneOffsetString } from './utils';
+import { getTimeZoneOffsetMins, getTimeZoneOffsetString, splitTensAndOnes } from './utils';
 
 type TimeZoneConfig = {
   label: string;
@@ -33,7 +33,7 @@ configs.forEach((config) => {
 
 const App: React.FC<NonNullable<unknown>> = () => {
   // A state to force update the component every second
-  const [, setNow] = useState<number>();
+  const [now, setNow] = useState<number>();
 
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -50,10 +50,26 @@ const App: React.FC<NonNullable<unknown>> = () => {
     setVariantIndex((cur) => (cur + 1) % variants.length);
   };
 
+  if (!now) {
+    return null;
+  }
+
   return (
     <div className="App" onClick={setNextVariantIndex}>
       <div id="clock-grid">
         {configs.map((config) => {
+          const currentTime = new Date(now);
+
+          currentTime.setMinutes(currentTime.getMinutes() + getTimeZoneOffsetMins(config.timeZoneId));
+
+          const [[h_t, h_o], [m_t, m_o], [s_t, s_o]] = [
+            splitTensAndOnes(currentTime.getUTCHours()),
+            splitTensAndOnes(currentTime.getUTCMinutes()),
+            splitTensAndOnes(currentTime.getUTCSeconds()),
+          ];
+
+          const timeParts = [h_t, h_o, m_t, m_o, s_t, s_o] as const;
+
           return (
             <div className="background-container">
               <div
@@ -64,7 +80,9 @@ const App: React.FC<NonNullable<unknown>> = () => {
               ></div>
               <div className="clock-with-label">
                 <div className="label">{config.label}</div>
-                <div className="clock-wrapper">{config.label}</div>
+                <div className="clock-wrapper">
+                  <Component timeParts={timeParts} />
+                </div>
               </div>
             </div>
           );
