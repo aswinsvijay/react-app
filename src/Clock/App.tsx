@@ -75,7 +75,7 @@ const App: React.FC<NonNullable<unknown>> = () => {
               <div
                 className="background"
                 style={{
-                  backgroundImage: `url(/clock/${config.timeZoneId.toLowerCase().replace('/', '-')}.jpg)`,
+                  backgroundImage: `url(./clock/${config.timeZoneId.toLowerCase().replace('/', '-')}.jpg)`,
                 }}
               ></div>
               <div className="clock-with-label">
