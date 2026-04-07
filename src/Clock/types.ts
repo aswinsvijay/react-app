@@ -1,3 +1,3 @@
 export type ClockComponentProps = {
-  timeParts: [number, number, number, number, number, number];
+  timeParts: readonly [number, number, number, number, number, number];
 };
