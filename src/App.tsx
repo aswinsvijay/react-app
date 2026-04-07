@@ -9,10 +9,10 @@ const appList = [
   { name: 'Wordle', Component: Wordle },
   { name: 'Blocks', Component: Blocks },
   { name: 'Clock', Component: Clock },
-];
+] as const;
 
 function App() {
-  const [selected, setSelected] = useState('Wordle');
+  const [selected, setSelected] = useState<(typeof appList)[number]['name']>('Clock');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
