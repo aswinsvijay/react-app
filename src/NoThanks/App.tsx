@@ -20,25 +20,51 @@ type Message = {
 }[keyof Events];
 
 type GameState = {
-  players: Record<
-    string,
-    {
-      connection: string;
-      cards: number[];
-      tokens: number;
-    }
-  >;
+  players: Array<{
+    identity: string;
+    connection: string;
+    cards: number[];
+    tokens: number;
+  }>;
   currentPlayer: string;
   deck: number[];
 };
 
+const initialGameState = (): GameState => {
+  return {
+    players: [],
+    currentPlayer: '',
+    deck: [],
+  };
+};
+
 const Host: React.FC = () => {
-  const { hostId, connections } = useP2PServer<Message>();
+  const { hostId, connections, message } = useP2PServer<Message>();
   const { enqueueSnackbar } = useSnackbar();
   const connectionsCount = useMemo(() => connections.size, [connections]);
 
+  const [, setGameState] = useState<GameState | null>();
+
+  const onPlay = () => {
+    setGameState({
+      ...initialGameState(),
+      players: [...connections.keys()].map((id) => {
+        return { cards: [], connection: id, identity: '', tokens: 14 };
+      }),
+    });
+  };
+
+  useEffect(() => {
+    console.log(JSON.stringify(message));
+
+    enqueueSnackbar(JSON.stringify(message));
+  }, [message, enqueueSnackbar]);
+
   const handleCopy = async () => {
     if (!hostId) return;
+
+    console.log(onPlay);
+
     try {
       await navigator.clipboard.writeText(hostId);
       enqueueSnackbar({ variant: 'info', message: 'Copied!' });
@@ -103,6 +129,17 @@ const Join: React.FC = () => {
           </div>
         ) : null}
       </div>
+      <button
+        onClick={() => {
+          send({ type: 'currentPlayerChange', data: { name: '1' } });
+          send({ type: 'currentPlayerChange', data: { name: '2' } });
+          send({ type: 'currentPlayerChange', data: { name: '3' } });
+          send({ type: 'currentPlayerChange', data: { name: '4' } });
+        }}
+        disabled={status !== 'connected'}
+      >
+        Spam
+      </button>
     </div>
   );
 };
