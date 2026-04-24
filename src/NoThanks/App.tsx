@@ -27,7 +27,7 @@ type GameState = {
 };
 
 const Host: React.FC = () => {
-  const { hostId, connections } = useP2PServer();
+  const { hostId, connections } = useP2PServer<Message>();
   const connectionsCount = useMemo(() => connections.size, [connections]);
 
   const [copied, setCopied] = useState(false);
@@ -60,7 +60,7 @@ const Host: React.FC = () => {
 const Join: React.FC = () => {
   const [hostId, setHostId] = useState('');
   const [name, setName] = useState('');
-  const { join, lastError, status } = useP2PClient();
+  const { join, lastError, status } = useP2PClient<Message>();
 
   useEffect(() => {
     if (status !== 'connected') {
