@@ -4,14 +4,17 @@ import './App.css';
 import Wordle from './Wordle/App';
 import Blocks from './Blocks/App';
 import Clock from './Clock/App';
+import NoThanks from './NoThanks/App';
 
-const appList = [
+const clientOnlyApps = [
   { name: 'Wordle', Component: Wordle },
   { name: 'Blocks', Component: Blocks },
   { name: 'Clock', Component: Clock },
 ] as const;
 
-type AppName = (typeof appList)[number]['name'];
+const serverRequiredApps = [{ name: 'NoThanks', Component: NoThanks }] as const;
+
+type AppName = (typeof clientOnlyApps | typeof serverRequiredApps)[number]['name'];
 
 const hamburgerStyle: React.CSSProperties = {
   width: 32,
@@ -70,7 +73,7 @@ function Sidebar({
         gap: 2,
       }}
     >
-      {appList.map(({ name }) => (
+      {[...clientOnlyApps, ...serverRequiredApps].map(({ name }) => (
         <button
           key={name}
           style={{
@@ -107,7 +110,7 @@ function Hamburger({ onClick }: { onClick: () => void }) {
 }
 
 function App() {
-  const [selected, setSelected] = useState<(typeof appList)[number]['name']>('Clock');
+  const [selected, setSelected] = useState<AppName>('Clock');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -151,7 +154,7 @@ function App() {
             minHeight: '100vh',
           }}
         >
-          {appList.map(({ name, Component }) => {
+          {[...clientOnlyApps, ...serverRequiredApps].map(({ name, Component }) => {
             return selected === name && <Component key={name} />;
           })}
         </div>
