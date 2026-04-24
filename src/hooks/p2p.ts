@@ -101,11 +101,8 @@ export const useP2PServer = <TData>() => {
     };
   }, [connections]);
 
-  return {
-    hostId,
-    connections,
-    message,
-    send: (id: string, data: TData) => {
+  const send = useCallback(
+    (id: string, data: TData) => {
       const connection = connections.get(id);
 
       if (!connection) {
@@ -114,6 +111,14 @@ export const useP2PServer = <TData>() => {
 
       connection.send(data);
     },
+    [connections]
+  );
+
+  return {
+    hostId,
+    connections,
+    message,
+    send,
   };
 };
 
@@ -159,7 +164,7 @@ export const useP2PClient = <TData>() => {
     };
   }, []);
 
-  const join = (hostId: string) => {
+  const join = useCallback((hostId: string) => {
     const peer = peerRef.current;
     if (!peer || !hostId) return;
 
@@ -189,19 +194,21 @@ export const useP2PClient = <TData>() => {
         setLastError(err instanceof Error ? err.message : String(err));
         setStatus('error');
       });
-  };
+  }, []);
+
+  const send = useCallback((data: TData) => {
+    if (!connRef.current) {
+      return;
+    }
+
+    connRef.current.send(data);
+  }, []);
 
   return {
     join,
     lastError,
     status,
     message,
-    send: (data: TData) => {
-      if (!connRef.current) {
-        return;
-      }
-
-      connRef.current.send(data);
-    },
+    send,
   };
 };
