@@ -1,6 +1,7 @@
 import { useP2PClient, useP2PServer } from '../hooks';
 import './App.css';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSnackbar } from 'notistack';
 
 type Events = {
   identity: {
@@ -33,19 +34,16 @@ type GameState = {
 
 const Host: React.FC = () => {
   const { hostId, connections } = useP2PServer<Message>();
+  const { enqueueSnackbar } = useSnackbar();
   const connectionsCount = useMemo(() => connections.size, [connections]);
-
-  const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     if (!hostId) return;
     try {
       await navigator.clipboard.writeText(hostId);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1000);
+      enqueueSnackbar({ variant: 'info', message: 'Copied!' });
     } catch {
-      // fallback for environments without clipboard API
-      setCopied(false);
+      enqueueSnackbar({ variant: 'error', message: 'Cannot copy' });
     }
   };
 
@@ -55,7 +53,7 @@ const Host: React.FC = () => {
         <strong>Game ID: {hostId ?? '…'}</strong>
       </div>
       <button onClick={handleCopy} disabled={!hostId}>
-        {copied ? 'Copied!' : 'Copy'}
+        Copy
       </button>
       {connectionsCount} connections
     </div>
