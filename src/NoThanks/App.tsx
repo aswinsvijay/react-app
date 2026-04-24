@@ -6,6 +6,9 @@ type Events = {
   identity: {
     name: string;
   };
+  currentPlayerChange: {
+    name: string;
+  };
 };
 
 type Message = {
@@ -13,7 +16,7 @@ type Message = {
     type: K;
     data: Events[K];
   };
-};
+}[keyof Events];
 
 type GameState = {
   players: Record<
@@ -62,13 +65,15 @@ const Host: React.FC = () => {
 const Join: React.FC = () => {
   const [hostId, setHostId] = useState('');
   const [name, setName] = useState('');
-  const { join, lastError, status } = useP2PClient<Message>();
+  const { join, lastError, status, send } = useP2PClient<Message>();
 
   useEffect(() => {
     if (status !== 'connected') {
       return;
     }
-  }, [status]);
+
+    send({ type: 'identity', data: { name } });
+  }, [status, send, name]);
 
   return (
     <div className="join-container">
