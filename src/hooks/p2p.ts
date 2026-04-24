@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Peer, { type DataConnection } from 'peerjs';
 
-export const useP2PServer = () => {
+export const useP2PServer = <TData>() => {
   const [hostId, setHostId] = useState<string | null>(null);
   const peerRef = useRef<Peer | null>(null);
   const [connections, setConnections] = useState(new Map<string, DataConnection>());
@@ -38,7 +38,7 @@ export const useP2PServer = () => {
           })
           .on('data', (data) => {
             // Handle game messages here. For now, just log them.
-            console.log('[host] received', { from: connection.peer, data });
+            console.log('[host] received', { from: connection.peer, data: data as TData });
           })
           .on('iceStateChanged', (s) => {
             if (s === 'disconnected' || s === 'closed' || s === 'failed') {
@@ -99,7 +99,7 @@ export const useP2PServer = () => {
   return {
     hostId,
     connections,
-    send: (id: string, data: unknown) => {
+    send: (id: string, data: TData) => {
       const connection = connections.get(id);
 
       if (!connection) {
@@ -111,7 +111,7 @@ export const useP2PServer = () => {
   };
 };
 
-export const useP2PClient = () => {
+export const useP2PClient = <TData>() => {
   const [status, setStatus] = useState<'idle' | 'connecting' | 'connected' | 'disconnected' | 'error'>('idle');
   const [lastError, setLastError] = useState<string | null>(null);
 
@@ -171,7 +171,7 @@ export const useP2PClient = () => {
         conn.send({ type: 'hello-from-join' });
       })
       .on('data', (data) => {
-        console.log('[join] received', data);
+        console.log('[join] received', data as TData);
       })
       .on('close', () => {
         setStatus('disconnected');
@@ -187,7 +187,7 @@ export const useP2PClient = () => {
     join,
     lastError,
     status,
-    send: (data: unknown) => {
+    send: (data: TData) => {
       if (!connRef.current) {
         return;
       }
