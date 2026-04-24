@@ -20,6 +20,8 @@ type GameState = {
     string,
     {
       connection: string;
+      cards: number[];
+      tokens: number;
     }
   >;
   currentPlayer: string;
