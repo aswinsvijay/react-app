@@ -5,6 +5,10 @@ export const useP2PServer = <TData>() => {
   const [hostId, setHostId] = useState<string | null>(null);
   const peerRef = useRef<Peer | null>(null);
   const [connections, setConnections] = useState(new Map<string, DataConnection>());
+  const [message, setMessage] = useState<{
+    from: string;
+    data: TData;
+  } | null>(null);
 
   const updateConnection = useCallback((id: string, connection: DataConnection | null) => {
     setConnections((connections) => {
@@ -39,6 +43,7 @@ export const useP2PServer = <TData>() => {
           .on('data', (data) => {
             // Handle game messages here. For now, just log them.
             console.log('[host] received', { from: connection.peer, data: data as TData });
+            setMessage({ from: connection.peer, data: data as TData });
           })
           .on('iceStateChanged', (s) => {
             if (s === 'disconnected' || s === 'closed' || s === 'failed') {
@@ -99,6 +104,7 @@ export const useP2PServer = <TData>() => {
   return {
     hostId,
     connections,
+    message,
     send: (id: string, data: TData) => {
       const connection = connections.get(id);
 
@@ -114,6 +120,7 @@ export const useP2PServer = <TData>() => {
 export const useP2PClient = <TData>() => {
   const [status, setStatus] = useState<'idle' | 'connecting' | 'connected' | 'disconnected' | 'error'>('idle');
   const [lastError, setLastError] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ data: TData } | null>(null);
 
   const peerRef = useRef<Peer | null>(null);
   const connRef = useRef<DataConnection | null>(null);
@@ -172,6 +179,7 @@ export const useP2PClient = <TData>() => {
       })
       .on('data', (data) => {
         console.log('[join] received', data as TData);
+        setMessage({ data: data as TData });
       })
       .on('close', () => {
         setStatus('disconnected');
@@ -187,6 +195,7 @@ export const useP2PClient = <TData>() => {
     join,
     lastError,
     status,
+    message,
     send: (data: TData) => {
       if (!connRef.current) {
         return;
