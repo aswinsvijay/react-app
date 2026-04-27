@@ -6,7 +6,7 @@ import Blocks from './Blocks/App';
 import Clock from './Clock/App';
 
 const appList = [
-  { name: 'Wordle-Test', Component: Wordle },
+  { name: 'Wordle', Component: Wordle },
   { name: 'Blocks', Component: Blocks },
   { name: 'Clock', Component: Clock },
 ] as const;
