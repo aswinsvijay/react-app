@@ -5,6 +5,7 @@ import Wordle from './Wordle/App';
 import Blocks from './Blocks/App';
 import Clock from './Clock/App';
 import NoThanks from './NoThanks/App';
+import Call from './Call/App';
 
 const clientOnlyApps = [
   { name: 'Wordle', Component: Wordle },
@@ -12,7 +13,10 @@ const clientOnlyApps = [
   { name: 'Clock', Component: Clock },
 ] as const;
 
-const serverRequiredApps = [{ name: 'NoThanks', Component: NoThanks }] as const;
+const serverRequiredApps = [
+  { name: 'NoThanks', Component: NoThanks },
+  { name: 'Call', Component: Call },
+] as const;
 
 type AppName = (typeof clientOnlyApps | typeof serverRequiredApps)[number]['name'];
 

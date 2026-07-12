@@ -119,6 +119,7 @@ export const useP2PServer = <TData>() => {
     connections,
     message,
     send,
+    _peer: peerRef.current,
   };
 };
 
@@ -210,5 +211,6 @@ export const useP2PClient = <TData>() => {
     status,
     message,
     send,
+    _peer: peerRef.current,
   };
 };
