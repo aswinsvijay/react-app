@@ -5,12 +5,14 @@ import Wordle from './Wordle/App';
 import Blocks from './Blocks/App';
 import Clock from './Clock/App';
 import Prisoners from './Prisoners/App';
+import Sort from './Sort/App';
 
 const appList = [
   { name: 'Wordle', Component: Wordle },
   { name: 'Blocks', Component: Blocks },
   { name: 'Clock', Component: Clock },
   { name: 'Prisoners', Component: Prisoners },
+  { name: 'Sort', Component: Sort },
 ] as const;
 
 type AppName = (typeof appList)[number]['name'];
