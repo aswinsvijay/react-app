@@ -197,8 +197,8 @@ const App: React.FC<NonNullable<unknown>> = () => {
   const [algorithm, setAlgorithm] = useState<keyof typeof algorithmFunctions>('bubble');
   const [type, setType] = useState<keyof typeof visualizationTypeComponents>('Vertical');
 
-  const [rows, setRows] = useState(1);
-  const [columns, setColumns] = useState(100);
+  const [rows, setRows] = useState(20);
+  const [columns, setColumns] = useState(20);
 
   const algorithmFunction = algorithmFunctions[algorithm];
   const VisualizationComponent = visualizationTypeComponents[type];
