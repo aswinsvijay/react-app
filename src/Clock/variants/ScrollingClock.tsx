@@ -1,6 +1,6 @@
 import type React from 'react';
 import type { ClockComponentProps } from '../types';
-import { range } from '../utils';
+import { range } from 'es-toolkit';
 
 const limits = [range(0, 2), range(0, 9), range(0, 5), range(0, 9), range(0, 5), range(0, 9)];
 
