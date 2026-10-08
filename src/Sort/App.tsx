@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useMemo, useState } from 'react';
 import * as np from 'numpy-ts';
 import { range } from 'es-toolkit';
+import { drawGreyscaleImage, drawRGBAImage } from './utils';
 
 function* bubble(arr: number[]) {
   const N = arr.length;
@@ -36,26 +37,7 @@ const Vertical: React.FC<{ columns: number; rows: number }> = ({ columns }) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const [height, width] = img.shape;
-    [canvas.height, canvas.width] = [height, width];
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Extract numpy-ts NDArray data to flat array
-    // img.data returns TypedArray for most dtypes
-    const flat = img.data as Uint8Array;
-
-    // Create ImageData buffer (RGBA)
-    const imageData = ctx.createImageData(width, height);
-    for (let i = 0; i < flat.length; ++i) {
-      const v = flat[i]; // grayscale value 0-255
-      imageData.data[i * 4 + 0] = v;
-      imageData.data[i * 4 + 1] = v;
-      imageData.data[i * 4 + 2] = v;
-      imageData.data[i * 4 + 3] = 255; // opaque
-    }
-    ctx.putImageData(imageData, 0, 0);
+    drawGreyscaleImage(canvas, img);
   }, [img]);
 
   return (
@@ -127,25 +109,9 @@ const Image: React.FC<{ columns: number; rows: number }> = ({ columns, rows }) =
     if (!imgArray) return;
 
     const canvas = canvasRef.current;
-
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    const [height, width] = imgArray.shape;
-    [canvas.height, canvas.width] = imgArray.shape;
-    const flat = imgArray.data as Uint8Array;
-    const imageData = ctx.getImageData(0, 0, width, height);
-
-    for (let idx = 0; idx < flat.length; idx += 4) {
-      imageData.data[idx + 0] = flat[idx + 0];
-      imageData.data[idx + 1] = flat[idx + 1];
-      imageData.data[idx + 2] = flat[idx + 2];
-      imageData.data[idx + 3] = flat[idx + 3];
-    }
-    ctx.putImageData(imageData, 0, 0);
+    drawRGBAImage(canvas, imgArray);
   }, [imgArray]);
 
   if (!file) {
