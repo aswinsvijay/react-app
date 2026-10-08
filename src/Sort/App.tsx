@@ -31,7 +31,6 @@ const Vertical: React.FC<{ columns: number; rows: number }> = ({ columns }) => {
   }, [columns]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageDataRef = useRef<ImageData>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -48,17 +47,15 @@ const Vertical: React.FC<{ columns: number; rows: number }> = ({ columns }) => {
     const flat = img.data as Uint8Array;
 
     // Create ImageData buffer (RGBA)
-    if (!imageDataRef.current || imageDataRef.current.width !== width || imageDataRef.current.height !== height) {
-      imageDataRef.current = ctx.createImageData(width, height);
-    }
+    const imageData = ctx.createImageData(width, height);
     for (let i = 0; i < flat.length; ++i) {
       const v = flat[i]; // grayscale value 0-255
-      imageDataRef.current.data[i * 4 + 0] = v;
-      imageDataRef.current.data[i * 4 + 1] = v;
-      imageDataRef.current.data[i * 4 + 2] = v;
-      imageDataRef.current.data[i * 4 + 3] = 255; // opaque
+      imageData.data[i * 4 + 0] = v;
+      imageData.data[i * 4 + 1] = v;
+      imageData.data[i * 4 + 2] = v;
+      imageData.data[i * 4 + 3] = 255; // opaque
     }
-    ctx.putImageData(imageDataRef.current, 0, 0);
+    ctx.putImageData(imageData, 0, 0);
   }, [img]);
 
   return (
