@@ -26,23 +26,22 @@ export function drawGreyscaleImage(canvas: HTMLCanvasElement, img: np.NDArray<'u
 
 export function drawRGBAImage(canvas: HTMLCanvasElement, img: np.NDArray<'uint8'>) {
   const [height, width, channels] = img.shape;
+
   if (channels !== 4) throw new Error('Expected 4 channels in RGBA image');
-  canvas.width = width;
-  canvas.height = height;
+
+  [canvas.height, canvas.width] = img.shape;
+
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
   const imageData = ctx.createImageData(width, height);
 
-  for (let y = 0; y < height; ++y) {
-    for (let x = 0; x < width; ++x) {
-      const idx = (y * width + x) * 4;
-      // Use .get(y, x, c) to support any shape/stride
-      imageData.data[idx + 0] = img.get([y, x, 0]); // R
-      imageData.data[idx + 1] = img.get([y, x, 1]); // G
-      imageData.data[idx + 2] = img.get([y, x, 2]); // B
-      imageData.data[idx + 3] = img.get([y, x, 3]); // A
-    }
+  const flat = img.flatten().data as Uint8Array;
+  for (let idx = 0; idx < flat.length; idx += 4) {
+    imageData.data[idx + 0] = flat[idx + 0];
+    imageData.data[idx + 1] = flat[idx + 1];
+    imageData.data[idx + 2] = flat[idx + 2];
+    imageData.data[idx + 3] = flat[idx + 3];
   }
 
   ctx.putImageData(imageData, 0, 0);
