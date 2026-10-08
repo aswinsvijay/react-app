@@ -4,16 +4,6 @@ export function divMod(value: number, divisor: number) {
   return [Math.floor(value / divisor), Math.floor(value % divisor)] as const;
 }
 
-export function range(start: number, stop: number) {
-  const res = [];
-
-  for (let i = start; i <= stop; ++i) {
-    res.push(i);
-  }
-
-  return res;
-}
-
 export function splitTensAndOnes(value: number) {
   return divMod(value, 10);
 }
