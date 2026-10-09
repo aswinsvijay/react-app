@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useMemo, useState } from 'react';
 import * as np from 'numpy-ts';
-import { range, shuffle } from 'es-toolkit';
+import { range } from 'es-toolkit';
 import { drawGreyscaleImage, drawRGBAImage, useSortAnimation } from './utils';
 import { algorithmFunctions, algorithms } from './sorts';
 
