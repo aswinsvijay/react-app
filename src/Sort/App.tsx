@@ -2,22 +2,15 @@ import React, { useRef, useEffect, useMemo, useState } from 'react';
 import * as np from 'numpy-ts';
 import { range } from 'es-toolkit';
 import { drawGreyscaleImage, drawRGBAImage } from './utils';
+import { algorithmFunctions } from './sorts';
 
-function* bubble(arr: number[]) {
-  const N = arr.length;
+type VisualizationComponent = React.FC<{
+  columns: number;
+  rows: number;
+  algorithm: (arr: number[]) => Generator<number[]>;
+}>;
 
-  for (let i = 0; i < N; ++i) {
-    for (let j = 0; j < N - i - 1; ++j) {
-      if (arr[j] > arr[j + 1]) {
-        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-      }
-    }
-
-    yield arr;
-  }
-}
-
-const Vertical: React.FC<{ columns: number; rows: number }> = ({ columns }) => {
+const Vertical: VisualizationComponent = ({ columns }) => {
   const img = useMemo(() => {
     const arr = np.zeros([columns, columns], 'uint8');
 
@@ -53,7 +46,7 @@ const Vertical: React.FC<{ columns: number; rows: number }> = ({ columns }) => {
   );
 };
 
-const Image: React.FC<{ columns: number; rows: number }> = ({ columns, rows }) => {
+const Image: VisualizationComponent = ({ columns, rows }) => {
   const [file, setFile] = useState<File | null>(null);
   const [imgArray, setImgArray] = useState<np.NDArray<'uint8'> | null>(null);
 
@@ -146,17 +139,9 @@ const Image: React.FC<{ columns: number; rows: number }> = ({ columns, rows }) =
 };
 
 const visualizationTypes = ['Vertical', 'Image'] as const;
-const visualizationTypeComponents: Record<
-  (typeof visualizationTypes)[number],
-  React.FC<{ columns: number; rows: number }>
-> = {
+const visualizationTypeComponents: Record<(typeof visualizationTypes)[number], VisualizationComponent> = {
   Vertical,
   Image,
-};
-
-const algorithms = ['bubble'] as const;
-const algorithmFunctions: Record<(typeof algorithms)[number], (arr: number[]) => Generator<number[]>> = {
-  bubble,
 };
 
 const App: React.FC<NonNullable<unknown>> = () => {
@@ -178,7 +163,7 @@ const App: React.FC<NonNullable<unknown>> = () => {
       }}
     >
       <div style={{ flex: 4, border: '10px solid grey', boxSizing: 'border-box' }}>
-        <VisualizationComponent columns={columns} rows={rows} />
+        <VisualizationComponent columns={columns} rows={rows} algorithm={algorithmFunction} />
       </div>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         Algorithm:
@@ -195,7 +180,6 @@ const App: React.FC<NonNullable<unknown>> = () => {
             );
           })}
         </select>
-        {algorithm}
         Type:
         <select
           onChange={(e) => {
@@ -210,7 +194,6 @@ const App: React.FC<NonNullable<unknown>> = () => {
             );
           })}
         </select>
-        {type}
         Rows:
         <input type="number" value={rows} onChange={(e) => setRows(e.target.valueAsNumber)} />
         Columns:
