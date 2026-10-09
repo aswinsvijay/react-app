@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useMemo, useState } from 'react';
 import * as np from 'numpy-ts';
-import { range } from 'es-toolkit';
+import { range, shuffle } from 'es-toolkit';
 import { drawGreyscaleImage, drawRGBAImage } from './utils';
-import { algorithmFunctions } from './sorts';
+import { algorithmFunctions, algorithms } from './sorts';
 
 type VisualizationComponent = React.FC<{
   columns: number;
@@ -10,7 +10,7 @@ type VisualizationComponent = React.FC<{
   algorithm: (arr: number[]) => Generator<number[]>;
 }>;
 
-const Vertical: VisualizationComponent = ({ columns }) => {
+const Vertical: VisualizationComponent = ({ columns, algorithm }) => {
   const img = useMemo(() => {
     const arr = np.zeros([columns, columns], 'uint8');
 
@@ -27,11 +27,28 @@ const Vertical: VisualizationComponent = ({ columns }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const arr = shuffle(range(columns));
+    const sortGenerator = algorithm(arr);
 
-    drawGreyscaleImage(canvas, img);
-  }, [img]);
+    function draw() {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const res = sortGenerator.next();
+
+      if (res.done) {
+        return;
+      }
+
+      drawGreyscaleImage(canvas, img.iindex(res.value, 1));
+    }
+
+    const interval = setInterval(draw, 10);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [img, columns, algorithm]);
 
   return (
     <canvas
