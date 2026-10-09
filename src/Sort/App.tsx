@@ -50,7 +50,7 @@ const Vertical: VisualizationComponent = ({ columns, algorithm }) => {
   );
 };
 
-const Image: VisualizationComponent = ({ columns, rows }) => {
+const Image: VisualizationComponent = ({ columns, rows, algorithm }) => {
   const [file, setFile] = useState<File | null>(null);
   const [imgArray, setImgArray] = useState<np.NDArray<'uint8'> | null>(null);
 
@@ -102,14 +102,30 @@ const Image: VisualizationComponent = ({ columns, rows }) => {
     reader.readAsDataURL(file);
   }, [file, columns, rows]);
 
-  useEffect(() => {
-    if (!imgArray) return;
+  useSortAnimation({
+    algorithm,
+    draw: (idx: number[]) => {
+      if (!imgArray) return;
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+      const canvas = canvasRef.current;
+      if (!canvas) return;
 
-    drawRGBAImage(canvas, imgArray);
-  }, [imgArray]);
+      const [height, width] = imgArray.shape;
+
+      drawRGBAImage(
+        canvas,
+        imgArray
+          .reshape(rows, height / rows, columns, width / columns, 4)
+          .transpose([0, 2, 1, 3, 4])
+          .reshape(rows * columns, -1)
+          .iindex(idx, 0)
+          .reshape(rows, columns, height / rows, width / columns, 4)
+          .transpose([0, 2, 1, 3, 4])
+          .reshape(height, width, 4)
+      );
+    },
+    n: columns * rows,
+  });
 
   if (!file) {
     return (
