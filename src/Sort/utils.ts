@@ -1,4 +1,6 @@
+import { range, shuffle } from 'es-toolkit';
 import * as np from 'numpy-ts';
+import { useEffect } from 'react';
 
 export function drawGreyscaleImage(canvas: HTMLCanvasElement, img: np.NDArray<'uint8'>) {
   const [height, width] = img.shape;
@@ -45,4 +47,35 @@ export function drawRGBAImage(canvas: HTMLCanvasElement, img: np.NDArray<'uint8'
   }
 
   ctx.putImageData(imageData, 0, 0);
+}
+
+export function useSortAnimation({
+  algorithm,
+  draw,
+  n,
+}: {
+  algorithm: (arr: number[]) => Generator<number[]>;
+  n: number;
+  draw: (idx: number[]) => void;
+}) {
+  useEffect(() => {
+    const arr = shuffle(range(n));
+    const sortGenerator = algorithm(arr);
+
+    function drawCallback() {
+      const res = sortGenerator.next();
+
+      if (res.done) {
+        return;
+      }
+
+      draw(res.value);
+    }
+
+    const interval = setInterval(drawCallback, 10);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [algorithm, draw, n]);
 }

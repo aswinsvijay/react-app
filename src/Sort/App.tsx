@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useMemo, useState } from 'react';
 import * as np from 'numpy-ts';
 import { range, shuffle } from 'es-toolkit';
-import { drawGreyscaleImage, drawRGBAImage } from './utils';
+import { drawGreyscaleImage, drawRGBAImage, useSortAnimation } from './utils';
 import { algorithmFunctions, algorithms } from './sorts';
 
 type VisualizationComponent = React.FC<{
@@ -26,29 +26,16 @@ const Vertical: VisualizationComponent = ({ columns, algorithm }) => {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
-    const arr = shuffle(range(columns));
-    const sortGenerator = algorithm(arr);
-
-    function draw() {
+  useSortAnimation({
+    algorithm,
+    draw: (idx: number[]) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      const res = sortGenerator.next();
-
-      if (res.done) {
-        return;
-      }
-
-      drawGreyscaleImage(canvas, img.iindex(res.value, 1));
-    }
-
-    const interval = setInterval(draw, 10);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [img, columns, algorithm]);
+      drawGreyscaleImage(canvas, img.iindex(idx, 1));
+    },
+    n: columns,
+  });
 
   return (
     <canvas
