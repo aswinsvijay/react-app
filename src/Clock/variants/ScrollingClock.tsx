@@ -2,7 +2,7 @@ import type React from 'react';
 import type { ClockComponentProps } from '../types';
 import { range } from 'es-toolkit';
 
-const limits = [range(0, 2), range(0, 9), range(0, 5), range(0, 9), range(0, 5), range(0, 9)];
+const limits = [range(3), range(10), range(6), range(10), range(6), range(10)];
 
 export const ScrollingClock: React.FC<ClockComponentProps> = ({ timeParts }) => {
   return (
