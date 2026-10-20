@@ -52,7 +52,7 @@ const Vertical: VisualizationComponent = ({ columns, algorithm }) => {
 
 const Image: VisualizationComponent = ({ columns, rows, algorithm }) => {
   const [file, setFile] = useState<File | null>(null);
-  const [imgArray, setImgArray] = useState<np.NDArray<'uint8'> | null>(null);
+  const imgArrayRef = useRef<np.NDArray<'uint8'> | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -92,7 +92,7 @@ const Image: VisualizationComponent = ({ columns, rows, algorithm }) => {
 
         using croppedImgArray = imgArray.slice(`${top}:${height - bottom}`, `${left}:${width - right}`);
 
-        setImgArray(croppedImgArray.copy());
+        imgArrayRef.current = croppedImgArray.copy();
       };
 
       if (typeof e.target?.result === 'string') {
@@ -105,16 +105,16 @@ const Image: VisualizationComponent = ({ columns, rows, algorithm }) => {
   useSortAnimation({
     algorithm,
     draw: (idx: number[]) => {
-      if (!imgArray) return;
+      if (!imgArrayRef.current) return;
 
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      const [height, width] = imgArray.shape;
+      const [height, width] = imgArrayRef.current.shape;
 
       drawRGBAImage(
         canvas,
-        imgArray
+        imgArrayRef.current
           .reshape(rows, height / rows, columns, width / columns, 4)
           .transpose([0, 2, 1, 3, 4])
           .reshape(rows * columns, -1)
